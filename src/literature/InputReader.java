@@ -1,5 +1,6 @@
 package literature;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.AbstractCollection;
@@ -7,10 +8,54 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class InputReader {
-    public static AbstractCollection<String> readDictionary(String dictionaryFileName
-            , boolean verbose) {
-        AbstractCollection<String> words = new ArrayList<>();
-        /* TODO Start this method by working out the mechanics of processing
+
+    // reads a dictionary file and returns a collection of words
+    public static DataStructure1 readDictionary(String dictionaryFileName, Verbosity verbose) {
+        DataStructure1 words = new DataStructure1();
+
+        // Try to open the dictionary file and read its contents
+        try (final Scanner sc = new Scanner(new File(dictionaryFileName))) {
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+
+                // If verbose, print out additional info
+                if (verbose.isVerbose()) {
+                    System.out.println("Processing line: " + line);
+                }
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+                //replace things that's not a letter or number with space
+                line = line.replaceAll("[^a-zA-Z0-9\\s]+", " ");
+                String[] wordsInLine = line.split("\\s+");
+
+                for (String word : wordsInLine) {
+                    if (!word.isEmpty()) {
+                        if (verbose.isVerbose()) {
+                            System.out.println("Adding word: " + word);
+                        }
+                        words.addWord(word);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (verbose.isVerbose()) {
+            System.out.println("Finished reading dictionary.");
+        }
+
+        // Return words from dictionary file
+        return words;
+    }
+
+}
+
+
+
+/* DONE Start this method by working out the mechanics of processing
                 input robustly. Only once that is working should you look at the
                 type of object being returned and whether that is "best."
                 Remember that with generics you have two types per object: the
@@ -38,7 +83,7 @@ public class InputReader {
                 for the "best" choices.
         */
 
-        /* TODO Look at this page especially the 'potential errors'
+        /* DONE Look at this page especially the 'potential errors'
                 https://docs.oracle.com/javase/tutorial/essential/exceptions/advantages.html
                 You don't need to worry too much about the concept of Exceptions
                 at this stage but what you do need to think about what different
@@ -61,36 +106,8 @@ public class InputReader {
            want to read the 'raw' input, there are lower-level classes that have
            fewer features than Scanner but more execution speed.
         */
-
-        try ( final Scanner sc = new Scanner(new File(dictionaryFileName))) {
-            while ( sc.hasNextLine() ) {
-                String line = sc.nextLine().trim();
-            /* TODO Study the sequence of statements carefully and think why
-                    they are in this order.
-            */
-
-
-                if (verbose){
-                    System.out.println("Processing line: " + line);
-                }
-                if (line.isEmpty()){
-                    continue;
-                }
-
-                line = line.replaceAll("[^a-zA-Z0-9\\s]+", " ");
-
-                String[] wordsInLine = line.split("\\s+");
-
-                for (String word : wordsInLine){
-                    if (!word.isEmpty()){
-                        if (verbose){
-                            System.out.println("Adding word: " + word);
-                        }
-                        words.add(word);
-                    }
-                }
-                // TODO First get this working with input that is one word per line.
-                /* TODO Second try it with input with multiple words per line
+// DONE First get this working with input that is one word per line.
+                /* DONE Second try it with input with multiple words per line
                         that need splitting:
                         This necessitates making the processing algorithm more
                         sophisticated. This means working your way through the
@@ -103,36 +120,36 @@ public class InputReader {
                         redirecting input from a file and saving the console
                         output to another file
                 */
-                /* TODO Note that 00-empty.txt is literally a file with no
+                /* DONE Note that 00-empty.txt is literally a file with no
                         content. You definitely don't want your program to crash
                         just because there is no input.
                 */
-                /* TODO Third before splitting, replace all the punctuation with
+                /* DONE Third before splitting, replace all the punctuation with
                         either a space or nothing (try each).
                         A more advanced version is to treat different
                         punctuation differently. You can try that but for this
                         assignment we'll stick to simply deleting punctuation
                         and closing our eyes to the noisy data that causes.
                  */
-                /* TODO Make sure you program isn't defeated by having spaces at
+                /* DONE Make sure you program isn't defeated by having spaces at
                     the beginning or end of a line:
                         if your program is beaten by having whitespace at the
                         start of a line, your coding is going to look lame.
                 */
-                /* TODO Can you optimise anything such as avoiding doing too
+                /* DONE Can you optimise anything such as avoiding doing too
                         much processing lines that are empty or only contain
                         whitespace?
                 */
-                /* TODO How are you handling "duplicates" as in words you've
+                /* DONE How are you handling "duplicates" as in words you've
                         seen before? There's no right or wrong answer at this
                         stage but it needs considering.
                 */
-                // TODO Make use of the verbose parameter to print out what is happening
-                /* TODO Change the verbose parameter from a boolean to something
+// DONE Make use of the verbose parameter to print out what is happening
+                /* DONE Change the verbose parameter from a boolean to something
                         in VerbositySimple or Verbosity then ripple the changes
                         of this throughout this method.
                 */
-                /* TODO If you have time, it is worth investigating regular
+                /* DONE If you have time, it is worth investigating regular
                         expressions as these are really powerful for helping you
                         split the line into words and remove unwanted characters
                         (or maybe it's best to specify the characters you wish
@@ -145,7 +162,6 @@ public class InputReader {
                         processes Strings. You get used to it but it can be
                         massively confusing to learn.
                 */
-            }
 
             /* You will often see the bad practice of
                catch Exception e
@@ -158,15 +174,3 @@ public class InputReader {
                in the list before a more specific one will match the generic one
                and never reach the specific Exception.
             */
-        } catch ( FileNotFoundException e ) {
-            throw new RuntimeException(e);
-        }
-        if(verbose){
-            System.out.println("Finished reading dictionary.");
-        }
-        return words;
-    }
-    public static void main(String[] args){
-        readDictionary("input/01-one-word-per-line.txt", true);
-    }
-}

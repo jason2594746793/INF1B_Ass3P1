@@ -11,8 +11,7 @@ public class Runner {
 
     public static final int JDK_MINIMUM = 11;
 
-    private static final boolean[] PRELIMINARY_CHECKS =
-            new boolean[]{
+    private static final boolean[] PRELIMINARY_CHECKS = new boolean[]{
                     jdkAcceptable()
             };
 
@@ -26,8 +25,7 @@ public class Runner {
             and filtering (in this case allMatch).
     */
     private static final boolean PRELIMINARY_CHECKS_PASSED =
-            IntStream.range(0, PRELIMINARY_CHECKS.length)
-                     .allMatch(i -> PRELIMINARY_CHECKS[i]);
+            IntStream.range(0, PRELIMINARY_CHECKS.length).allMatch(i -> PRELIMINARY_CHECKS[i]);
 
     private static String[] args;
 
@@ -41,7 +39,7 @@ public class Runner {
                 4: return the name of the method
         */
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        int Index = 3;
+        int Index = 3;//since the method is at the fourth place in the stackTrace
         return stackTraceElements[Index].getMethodName();
     }
 
@@ -49,7 +47,6 @@ public class Runner {
         if (VERBOSE.isVerbose()) {
             System.out.printf("%s%s: %S%n", LOG_PREFIX, getCallingMethodName(), ok);
         }
-
         // DONE First: create an if based on the verbosity level
             /* DONE format print the LOG_PREFIX,
                                  the name of the calling method, and
@@ -87,7 +84,7 @@ public class Runner {
         boolean ok = false;
         try (final FileInputStream fis = new FileInputStream(filename))
         {
-            int ignored = fis.read(); // check file is not empty by reading something
+            int ignored = fis.read(); // check file is not empty
             ok = ignored != -1;
         }
         catch ( IOException e )
